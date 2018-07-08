@@ -1,5 +1,5 @@
 <template>
-    <transition name="fade">
+   <!-- <transition name="fade">-->
         <div v-show="showFlag" class="details">
           <div>
                 <header class="header">
@@ -7,34 +7,34 @@
                         <div class="pull-left">
                             <span class="iconfont icon-left"></span>
                         </div>
-                        <div class="title">{{detailsData.desc}}</div>
+                        <div class="title">{{details.headline}}</div>
                     </header>
                 </header>
                <!-- <v-day :  data="detailsData" ref="day"></v-day> -->
           <div>
-              <div style=";background-color: red;height: 400px;width: 100%;padding-top: 0px">
-                  <img :src="detailsData.url" width="100%" height="100%"/>
+              <div style="height: 400px;width: 100%;padding-top: 50px">
+                  <img :src="details.previewImg" width="100%" height="100%"/>
               </div>
             <!--价格显示-->
               <div style="height: 27px; width: 100%; padding: 5px; padding-top: 13px;">
                 <span style="font-size: 12px;color: red">￥</span>
-                <span style="color: #fc5967;font-weight: bold;padding-top: 10px;font-size: 18px">300.00</span>
-                <span style="color: black;text-decoration:line-through;font-size: 10px">￥400.00</span>
-                <span style="float: right;color:black;font-size: 13px;padding-right: 20px;padding-top: 5px;">剩余库存：23件</span>
+                <span style="color: #fc5967;font-weight: bold;padding-top: 10px;font-size: 18px">{{details.sellingPrice}}</span>
+                <span style="color: black;text-decoration:line-through;font-size: 10px">{{details.originalPrice}}</span>
+                <span style="float: right;color:black;font-size: 13px;padding-right: 20px;padding-top: 5px;">剩余库存：{{details.inventory}}件</span>
               </div>
               <!--标题-->
               <div style="font-size: 16px;color: #212023;margin-bottom: 5px;padding: 5px;padding-left: 10px;">
-                {{detailsData.who}}
+                {{details.headline}}
               </div>
               <div style="font-size: 13px;color: #7b868c;margin-bottom: 13px;padding-left: 10px;">
-                {{detailsData.desc}}
+                {{details.subtitle}}
               </div>
               <!--商品详情-->
-              <div style="padding: 10px;margin-bottom: 70px;">
-              <!-- {{detailsData}}-->
+              <div style="padding: 10px;margin-bottom: 70px;    color: rgb(94, 100, 103);" class="div-details">
+                <span v-html="details.commodityDetails"></span>
+               <!-- <img :src="detailsData.url" width="100%" height="100%"/>
                 <img :src="detailsData.url" width="100%" height="100%"/>
-                <img :src="detailsData.url" width="100%" height="100%"/>
-                <img :src="detailsData.url" width="100%" height="100%"/>
+                <img :src="detailsData.url" width="100%" height="100%"/>-->
               </div>
               <!--购买模块-->
               <div style="height:50px;width: 100%;border-top: 1px solid rgba(249, 249, 249, 0.86);
@@ -42,28 +42,52 @@
                 <div style="background-color: white;display: table-cell;padding-top: 15px;text-align: center;width: 20%;">
                   <a href="tel:400-0000-688">咨询</a></div>
                 <div style="display: table-cell;color:white;padding-top: 15px;text-align: center;background-color: #fc5967;"
-                     @click="order(detailsData)">
+                     @click="order(details)">
                 立即下单</div>
               </div>
           </div>
           </div>
        </div>
-    </transition>
+<!--    </transition>-->
 </template>
 <script>
     import BScroll from 'better-scroll';
     import vDay from '../day/day.vue';
     import { mapState } from 'vuex';
+    import {loadFromlLocal} from '../../common/js/store.js';
     export default {
         name: 'v-details',
         props: {
         },
         data() {
             return {
-              showFlag: true
+              showFlag: true,
+              details: {
+                'id': '',
+                'commodityDetails': '',
+                'headline': '',
+                'subtitle': '',
+                'previewImg': '',
+                'comNo': '',
+                'originalPrice': '',
+                'sellingPrice': '',
+                'inventory': '',
+                'salesVolume': ''
+              }
             };
         },
         created() {
+          //  console.log(loadFromlLocal('previewImg', 'previewImg', ''));
+          this.details.commodityDetails = this.$route.query.commodityDetails;
+          this.details.id = this.$route.query.id;
+          this.details.headline = this.$route.query.headline;
+          this.details.subtitle = this.$route.query.subtitle;
+          this.details.previewImg = loadFromlLocal('previewImg', 'previewImg', '');
+          this.details.comNo = this.$route.query.comNo;
+          this.details.originalPrice = this.$route.query.originalPrice;
+          this.details.sellingPrice = this.$route.query.sellingPrice;
+          this.details.inventory = this.$route.query.inventory;
+          this.details.salesVolume = this.$route.query.salesVolume;
         },
         computed: {
           ...mapState([
@@ -85,13 +109,25 @@
                 });
             },
             hide() {
-                this.showFlag = false;
-                this.$router.go(-1);
+               // this.showFlag = false;
+              this.$router.go(-1);
             },
             order(data) {
               this.$store.commit('UPDATE_DETAILS', data);
               this.$store.commit('UPDATE_LOADING', true);
-              this.$router.push('ordereditor');
+              this.$router.replace({
+                name: 'ordereditor',
+                query: {
+                   id: this.details.id,
+                   headline: this.details.headline,
+                   subtitle: this.details.subtitle,
+                   comNo: this.details.comNo,
+                   originalPrice: this.details.originalPrice,
+                   sellingPrice: this.details.sellingPrice,
+                   inventory: this.details.inventory,
+                   salesVolume: this.details.salesVolume
+                }
+              });
               this.$nextTick(() => {
                 this.$store.commit('UPDATE_LOADING', false);
               });
@@ -105,4 +141,8 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
     @import './details.styl';
+    .div-details img{
+      width 100%
+      height 100%
+    }
 </style>

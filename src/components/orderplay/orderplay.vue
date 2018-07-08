@@ -15,7 +15,7 @@
                <span style="padding-right:10px;">
                   <span style="font-size: 12px;color: red">￥</span>
                   <span style="color: #fc5967;font-weight: bold;padding-top: 10px;font-size: 20px">
-                     222.90
+                     {{orderMoney}}
                   </span> 元</span>
             </div>
           </div>
@@ -34,7 +34,7 @@
         },
         data() {
             return {
-              money: 19.89,
+              orderMoney: 0,
               pageBg: {
                 backgroundImage: 'url(' + require('../../assets/play-bg.png') + ')',
                 backgroundRepeat: 'no-repeat',
@@ -43,14 +43,11 @@
             };
         },
         created() {
+          this.orderMoney = this.$route.params.orderMoney;
         },
         methods: {
           hide() {
             this.$router.go(-1);
-          },
-          checkInput(data) {
-            console.log(data.target.value);
-            this.money = Math.round((data.target.value * 11.2223) * 100) / 100;
           }
         },
         components: {

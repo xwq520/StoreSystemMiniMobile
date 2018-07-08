@@ -1,6 +1,6 @@
 <template>
 <!--    <transition name="fade">-->
-        <div class="details" >
+        <div class="details" style="position: absolute; overflow-y: hidden;">
                 <header class="header">
                     <header class="bar bar-nav" @click="hide">
                         <div class="pull-left">
@@ -9,28 +9,28 @@
                         <div class="title">填写订单</div>
                     </header>
                 </header>
-          <div style="margin-top: 60px;height: 120%;">
+          <div style="margin-top: 60px;">
             <div style="font-size: 16px;font-weight: bold;color: #212023;margin-bottom: 5px;padding: 5px;padding-left: 10px;">
-              确认收货地址
+              填写收货地址
             </div>
-              <textarea placeholder="输入详细收货地址" style="border: 0px;margin: 15px; width: 90%; height: 100px;font-size: 16px;"></textarea>
+              <textarea placeholder="输入详细收货地址" style="border: 0px;margin: 15px; width: 90%; height: 80px;font-size: 16px;" v-model="details.address"></textarea>
             <div style="font-size: 16px;font-weight: bold;color: #212023;margin-bottom: 15px; padding: 5px;padding-left: 10px;margin-top: 15px;">
               确认商品信息
             </div>
             <div  style="display: table;margin-left: 20px;padding-right: 25px;">
               <div style="display: table-cell">
-                 <img :src="detailsData.url" style="width: 100px;height: 100px;"/>
+                 <img :src="details.previewImg" style="width: 100px;height: 100px;"/>
               </div>
               <div style="display: table-cell;float: left;">
                 <div style="word-wrap:break-word;font-size: 16px;color: #212023;padding-left: 20px; margin-bottom: 10px;">
-                  标题信息大 啊大
+                   {{details.headline}}
                 </div>
                 <div style="font-size: 13px;color: #7b868c;padding-left: 20px;margin-bottom: 13px;">
-                    {{detailsData.desc}}
+                    {{details.subtitle}}
                 </div>
                 <div style="padding-left: 20px;margin-bottom: 13px;">
                   <span style="font-size: 12px;color: red">￥</span>
-                  <span style="color: #fc5967;font-weight: bold;padding-top: 10px;font-size: 18px">300.40</span>
+                  <span style="color: #fc5967;font-weight: bold;padding-top: 10px;font-size: 18px">{{details.sellingPrice}}</span>
                 </div>
               </div>
             </div>
@@ -55,7 +55,7 @@
                   </div>
                 <div style="display: table-cell;color:white;padding-top: 15px;text-align: center;background-color: #fc5967;"
                      @click="goPlay">
-                提交订单</div>
+                确定下单</div>
               </div>
           </div>
           </div>
@@ -63,6 +63,9 @@
 </template>
 <script>
     import { mapState } from 'vuex';
+    import {loadFromlLocal, savaToLocal} from '../../common/js/store.js';
+    import {post} from '../../common/HttpUtils';
+    import {api} from '../../common/HttpConfig';
 
     export default {
         name: 'v-ordereditor',
@@ -70,10 +73,37 @@
         },
         data() {
             return {
-              money: 19.89
+              money: 0,
+              orderCount: 1,
+              orderIng: true,
+              details: {
+                'id': '',
+                'commodityDetails': '',
+                'headline': '',
+                'subtitle': '',
+                'previewImg': '',
+                'comNo': '',
+                'originalPrice': '',
+                'sellingPrice': '',
+                'inventory': '',
+                'salesVolume': '',
+                'address': ''
+              }
             };
         },
         created() {
+          this.details.commodityDetails = this.$route.query.commodityDetails;
+          this.details.id = this.$route.query.id;
+          this.details.headline = this.$route.query.headline;
+          this.details.subtitle = this.$route.query.subtitle;
+          this.details.previewImg = loadFromlLocal('previewImg', 'previewImg', '');
+          this.details.comNo = this.$route.query.comNo;
+          this.details.originalPrice = this.$route.query.originalPrice;
+          this.details.sellingPrice = this.$route.query.sellingPrice;
+          this.details.inventory = this.$route.query.inventory;
+          this.details.salesVolume = this.$route.query.salesVolume;
+          this.money = this.details.sellingPrice.replace(new RegExp(',', 'gm'), '');
+          this.details.address = loadFromlLocal('address', 'address', '');
         },
         computed: {
           ...mapState([
@@ -85,11 +115,51 @@
             this.$router.go(-1);
           },
           checkInput(data) {
-            console.log(data.target.value);
-            this.money = Math.round((data.target.value * 11.2223) * 100) / 100;
+            let commoney = this.details.sellingPrice.replace(new RegExp(',', 'gm'), '');
+            this.money = Math.round((data.target.value * commoney) * 100) / 100;
+            this.orderCount = data.target.value;
           },
           goPlay() {
-            this.$router.push('orderplay');
+            if (!this.details.address) {
+              window.alert('请填写收货地址');
+              return;
+            }
+            if (!this.orderIng) {
+               return;
+            }
+            this.orderIng = false;
+             post({
+                url: api.api_home_place_order,
+                // curPage: this.page,
+                data: {
+                  commodityId: this.details.id,
+                  commodityNo: this.details.comNo,
+                  purchaseQuantity: this.orderCount,
+                  address: this.details.address,
+                  orderMoney: this.money
+                },
+                success: (res) => {
+                  if (res && res.code > 0) {
+                    // 下订单
+                    this.$router.replace({
+                      name: 'orderplay',
+                      params: {
+                        orderMoney: this.money
+                      }
+                    });
+                    this.orderIng = true;
+                  }
+                },
+                error: (e) => {
+                  this.orderIng = true;
+                }
+              }
+            );
+            if (this.details.address) {
+              savaToLocal('address', 'address', this.details.address);
+            } else {
+              savaToLocal('address', 'address', '');
+            }
           }
         },
         components: {
