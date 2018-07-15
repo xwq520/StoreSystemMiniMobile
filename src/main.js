@@ -23,7 +23,7 @@ Vue.use(vueResource);
 
 // error，loading是图片路径, 用require引入
 Vue.use(VueLazyload, {
-    error: require('./assets/404.png'),
+    error: require('./assets/404.jpg'),
     loading: require('./assets/loading.gif'),
     attempt: 3,
     preLoad: 1.3

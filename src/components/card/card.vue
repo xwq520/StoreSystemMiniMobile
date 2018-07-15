@@ -1,10 +1,10 @@
 <template>
   <div class="card">
-    <img  v-lazy="data.url?data.url+'?imageView2/0/w/200':null" class="img">
+    <img  v-lazy="data.previewImg" class="img" lazy="loading">
     <div class="card-content">
-      <div class="desc">{{data.desc}}</div>
+      <div class="desc">{{data.headline}}</div>
       <div class="card-content-bottom">
-        <div class="who">{{data.who}}</div>
+        <div class="who">{{data.subtitle}}</div>
       <!--  <div class="time">2017-12-33</div>-->
       </div>
     </div>

@@ -7,14 +7,15 @@
     <div class="welfare-center" style="margin-left: 10px">
       <figure v-show="leftData.length > 0" v-for="data in leftData" @click="selectDetails(data)">
         <v-img :imgUrl="data.previewImg" > </v-img>
-        <div>
+        <div style=" padding: 5px;text-align: -webkit-center;">
         <div class="welfare-div-title"  >
-          {{data.headline.substring(0,15)}}</div>
+          {{data.headline.substring(0,11)}}</div>
         <div class="welfare-div-subtitle" >
-          {{data.subtitle}}</div>
+          {{data.subtitle.substring(0,11)}}</div>
         <div class="welfare-div-money">
           <span style="color: red;">￥{{data.sellingPrice}}</span>
-          <span class="welfare-div-oldmoney">￥{{data.originalPrice}}</span></div>
+         <!-- <span class="welfare-div-oldmoney">￥{{data.originalPrice}}</span>-->
+        </div>
         </div>
       </figure>
     </div>
@@ -22,18 +23,18 @@
     <div class="welfare-center">
       <figure v-show="rightData.length > 0" v-for="data in rightData" @click="selectDetails(data)">
         <v-img :imgUrl="data.previewImg"></v-img>
-        <div>
+        <div style=" padding: 5px;text-align: -webkit-center;">
           <div class="welfare-div-title"  >
-            {{data.headline.substring(0,15)}}</div>
+            {{data.headline.substring(0,11)}}</div>
           <div class="welfare-div-subtitle" >
-            {{data.subtitle}}</div>
+            {{data.subtitle.substring(0,11)}}</div>
           <div class="welfare-div-money">
             <span style="color: red;">￥{{data.sellingPrice}}</span>
-            <span class="welfare-div-oldmoney">￥{{data.originalPrice}}</span></div>
+           <!-- <span class="welfare-div-oldmoney">￥{{data.originalPrice}}</span>-->
+          </div>
         </div>
       </figure>
     </div>
-
     <!--<v-details ref="details" :time="time" :detailsData="detailsData"></v-details>-->
   </div>
 </template>
@@ -111,7 +112,7 @@
       },
       selectDetails(data) {
        // this.time = data;
-       this.$store.commit('UPDATE_DETAILS', data);
+      // this.$store.commit('UPDATE_DETAILS', data);
        this.$store.commit('UPDATE_LOADING', true);
        this.$router.push({
           name: 'details',

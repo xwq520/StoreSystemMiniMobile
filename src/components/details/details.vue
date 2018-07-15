@@ -30,7 +30,7 @@
                 {{details.subtitle}}
               </div>
               <!--商品详情-->
-              <div style="padding: 10px;margin-bottom: 70px;    color: rgb(94, 100, 103);" class="div-details">
+              <div style="padding: 10px;margin-bottom: 70px;color: rgb(94, 100, 103);font-size: 12px;" class="div-details">
                 <span v-html="details.commodityDetails"></span>
                <!-- <img :src="detailsData.url" width="100%" height="100%"/>
                 <img :src="detailsData.url" width="100%" height="100%"/>
