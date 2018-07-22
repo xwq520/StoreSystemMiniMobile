@@ -9,7 +9,7 @@
                   <div class="title">支付收银</div>
               </header>
           </header>
-           <div style="padding-top: 80px;text-align: center;">
+           <div style="padding-top: 70px;text-align: center;">
              <div style="font-size: 20px;font-weight: bold;">本次消费</div>
              <div style="width: 100%;padding-top: 15px;">
                <span style="padding-right:10px;">
@@ -19,9 +19,11 @@
                   </span> 元</span>
             </div>
           </div>
+          <div style="margin-top: 10px;text-align: -webkit-center;font-size: 14px;">长按收款码可进行便捷支付</div>
           <div style="padding-left: 20px;padding-top: 20px;">
             <div style="font-weight: bold;">微信支付</div>
-            <div style="text-align: -webkit-center;"><img src="../../assets/wechat-play.jpg" width="50%"/></div>
+            <div style="text-align: -webkit-center;"><img src="../../assets/wechat-play.jpg" width="50%"/>
+            </div>
             <div style="font-weight: bold;">支付宝</div>
             <div style="text-align: -webkit-center;margin-bottom: 20px"><img src="../../assets/zhifubao-play.png" width="50%"/></div>
           </div>
