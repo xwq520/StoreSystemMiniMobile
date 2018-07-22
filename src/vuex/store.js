@@ -11,7 +11,7 @@ Vue.use(Vuex);
 
 // 创建一个对象来保存应用启动时的初始状态
 const state = {
-  'headerTitle': '商品宝贝',
+  'headerTitle': '精品药妆',
   'menus': uz.NAME_TITILE,
   'menuShow': false,
   'loadingShow': false,

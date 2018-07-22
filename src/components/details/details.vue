@@ -12,7 +12,7 @@
                 </header>
                <!-- <v-day :  data="detailsData" ref="day"></v-day> -->
           <div>
-              <div style="height: 400px;width: 100%;padding-top: 50px">
+              <div style="height: 300px;width: 100%;padding-top: 50px">
                   <img :src="details.previewImg" width="100%" height="100%"/>
               </div>
             <!--价格显示-->

@@ -4,7 +4,7 @@
       <div class="menu-header">
         <img class="menu-avatar" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2474005481,3977274516&fm=27&gp=0.jpg"
           alt="">
-        <div class="menu-title">xiangwq && fhonghu</div>
+        <div class="menu-title">美，是一种生活方式！</div>
       </div>
       <div class="menu-ul">
         <div v-for='menu in menus' @click="updateHeader(MENU_CONVERT[menu], menu)">
@@ -28,7 +28,8 @@
 <script>
   import { mapState } from 'vuex';
   // const MENU_CONVERT = { 'welfare': '我的宝贝', 'day': '新品上架', 'ios': '热销榜', android: 'Android', web: '折扣' };
-  const MENU_CONVERT = { 'welfare': '宝贝们', 'day': '热销榜', 'ios': '新品哟', 'web': '折扣品' };
+  // const MENU_CONVERT = { 'welfare': '精品药妆', 'day': '热销榜', 'ios': '新品哟', 'web': '折扣品' };
+  const MENU_CONVERT = { 'welfare': '精品药妆', 'day': '热销榜' };
   export default
     {
       name: 'v-menu',
