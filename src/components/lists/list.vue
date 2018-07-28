@@ -62,6 +62,7 @@
             'headline': data.headline,
             'subtitle': data.subtitle,
             'comNo': data.comNo,
+            'type': 'SALE',
             'originalPrice': data.originalPrice,
             'sellingPrice': data.sellingPrice,
             'inventory': data.inventory,
@@ -78,7 +79,9 @@
         post({
             url: api.api_home_page_list,
             curPage: this.page,
-            data: { },
+            data: {
+              'type': 'SALE'
+            },
             success: (res) => {
               if (res && res.code > 0) {
                 // this.page = 1;

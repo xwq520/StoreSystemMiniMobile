@@ -26,6 +26,7 @@
             </div>
             <div style="font-weight: bold;">支付宝</div>
             <div style="text-align: -webkit-center;margin-bottom: 20px"><img src="../../assets/zhifubao-play.png" width="50%"/></div>
+            <div style="font-size: 10px;text-align: -webkit-center;margin-bottom: 20px;"> 商店确认后，会尽快给您发货 </div>
           </div>
           </div>
 </template>
