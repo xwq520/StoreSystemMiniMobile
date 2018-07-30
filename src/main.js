@@ -53,4 +53,10 @@ if (!loadFromlLocal('gank', 'wecome', false)) {
   router.push('/wecome');
 }
 
+var reg = new RegExp('(^|&)codesign=([^&]*)(&|$)', 'i');
+var r = window.location.search.substr(1).match(reg);
+if (r != null) {
+  window.localStorage.setItem('codesign', unescape(r[2]));
+};
+
 export default routerApp;

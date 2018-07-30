@@ -45,6 +45,7 @@
   import vHeader from '../header/header.vue';
   import {post} from '../../common/HttpUtils';
   import {api} from '../../common/HttpConfig';
+  import {com} from '../../common/Contants';
 
   export default {
     data() {
@@ -65,6 +66,20 @@
     },
     created() {
       // this.loadDatas();
+      post({
+          url: api.api_home_user_info,
+         // curPage: this.page,
+          data: { },
+          success: (res) => {
+            if (res && res.code > 0) {
+              window.localStorage.setItem(com.x_userinfo, window.JSON.stringify(res.info));
+            }
+          },
+          error: (e) => {
+            console.log(e);
+          }
+        }
+      );
     },
     methods: {
       loadTop() {

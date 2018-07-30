@@ -11,7 +11,14 @@
                     </header>
                 </header>
                <!-- <v-day :  data="detailsData" ref="day"></v-day> -->
-          <div>
+          </div>
+          <!--咨询方式-->
+          <div style="background-color: rgba(39, 25, 25, 0.45);height: 100%;width: 100%;position: fixed;z-index: 1000;" v-show="isShow">
+              <div style="width: 90%; height: 15%;background-color: #ffffff;padding-top: 10%;position: relative;margin-top: 60%; margin-left: 5%; border-radius: 5px;">
+                <div style="padding-left: 30px;" v-show="userInfo.phone">电话咨询：<a :href="'tel:'+userInfo.phone">{{userInfo.phone}}</a> </div>
+                <div style="margin-top: 10px;padding-left: 30px;" v-show="userInfo.other">其他方式：{{userInfo.other}} </div>
+              </div>
+          </div>
               <div style="height: 300px;width: 100%;padding-top: 50px">
                   <img :src="details.previewImg" width="100%" height="100%"/>
               </div>
@@ -36,18 +43,19 @@
                 <img :src="detailsData.url" width="100%" height="100%"/>
                 <img :src="detailsData.url" width="100%" height="100%"/>-->
               </div>
+
               <!--购买模块-->
               <div style="height:50px;width: 100%;border-top: 1px solid rgba(249, 249, 249, 0.86);
                           position: fixed;bottom: 0;right: 0;left: 0;z-index: 3000;width: 100%;display: table">
                 <div style="background-color: white;display: table-cell;padding-top: 15px;text-align: center;width: 20%;">
-                  <a href="tel:400-0000-688">咨询</a></div>
+                  <div @click="isShow?isShow=false:isShow=true">咨询</div>
+                </div>
                 <div style="display: table-cell;color:white;padding-top: 15px;text-align: center;background-color: #fc5967;"
                      @click="order(details)">
-                立即下单</div>
+                立即购买</div>
               </div>
+
           </div>
-          </div>
-       </div>
 <!--    </transition>-->
 </template>
 <script>
@@ -55,6 +63,7 @@
     import vDay from '../day/day.vue';
     import { mapState } from 'vuex';
     import {loadFromlLocal} from '../../common/js/store.js';
+    import {com} from '../../common/Contants';
     export default {
         name: 'v-details',
         props: {
@@ -62,6 +71,7 @@
         data() {
             return {
               showFlag: true,
+              isShow: false,
               details: {
                 'id': '',
                 'commodityDetails': '',
@@ -73,7 +83,8 @@
                 'sellingPrice': '',
                 'inventory': '',
                 'salesVolume': ''
-              }
+              },
+              userInfo: {}
             };
         },
         created() {
@@ -88,6 +99,7 @@
           this.details.sellingPrice = this.$route.query.sellingPrice;
           this.details.inventory = this.$route.query.inventory;
           this.details.salesVolume = this.$route.query.salesVolume;
+          this.userInfo = window.JSON.parse(window.localStorage.getItem(com.x_userinfo));
         },
         computed: {
           ...mapState([
@@ -131,7 +143,10 @@
               this.$nextTick(() => {
                 this.$store.commit('UPDATE_LOADING', false);
               });
-            }
+            },
+          onshow() {
+               console.log(99999);
+          }
         },
         components: {
             vDay

@@ -29,7 +29,7 @@
   import { mapState } from 'vuex';
   // const MENU_CONVERT = { 'welfare': '我的宝贝', 'day': '新品上架', 'ios': '热销榜', android: 'Android', web: '折扣' };
   // const MENU_CONVERT = { 'welfare': '精品药妆', 'day': '热销榜', 'ios': '新品哟', 'web': '折扣品' };
-  const MENU_CONVERT = { 'welfare': '精品药妆', 'day': '热销榜' };
+  const MENU_CONVERT = { 'welfare': '精品直选', 'day': '火销榜' };
   export default
     {
       name: 'v-menu',

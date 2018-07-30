@@ -8,7 +8,7 @@ export function post(args) {
       return '';
   }
   // let ms_username = localStorage.getItem('ms_username');
-  axios.defaults.headers.common['x-code-key'] = '89c9bb1b';
+  axios.defaults.headers.common['x-code-key'] = window.localStorage.getItem('codesign');
   axios.defaults.headers.common['x-pagination-index'] = args.curPage ? args.curPage - 1 : 0;
   axios.defaults.headers.common['x-pagination-size'] = com.x_pagination_size;
 

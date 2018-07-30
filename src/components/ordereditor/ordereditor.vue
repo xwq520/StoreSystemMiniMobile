@@ -9,12 +9,12 @@
                         <div class="title">填写订单</div>
                     </header>
                 </header>
-          <div style="margin-top: 60px;">
-            <div style="font-size: 16px;font-weight: bold;color: #212023;margin-bottom: 5px;padding: 5px;padding-left: 10px;">
+          <div style="margin-top: 60px">
+            <div style="font-size: 16px; color: #212023;margin-bottom: 5px;padding: 5px;padding-left: 10px;">
               填写收货地址
             </div>
-              <textarea placeholder="输入详细收货地址" style="border: 0px;margin: 15px; width: 90%; height: 80px;font-size: 16px;" v-model="details.address"></textarea>
-            <div style="font-size: 16px;font-weight: bold;color: #212023;margin-bottom: 15px; padding: 5px;padding-left: 10px;margin-top: 15px;">
+              <textarea placeholder="输入详细收货地址" style="border: 0px;margin: 15px; width: 90%; height: 80px;font-size: 14px;" v-model="details.address"></textarea>
+            <div style="font-size: 16px; color: #212023;margin-bottom: 15px; padding: 5px;padding-left: 10px;margin-top: 15px;">
               确认商品信息
             </div>
             <div  style="display: table;margin-left: 20px;padding-right: 25px;">
@@ -22,25 +22,32 @@
                  <img :src="details.previewImg" style="width: 100px;height: 100px;"/>
               </div>
               <div style="display: table-cell;float: left;">
-                <div style="word-wrap:break-word;font-size: 16px;color: #212023;padding-left: 20px; margin-bottom: 10px;">
+                <div style="word-wrap:break-word;font-size: 14px;color: #212023;padding-left: 20px; margin-bottom: 10px;">
                    {{details.headline}}
                 </div>
-                <div style="font-size: 13px;color: #7b868c;padding-left: 20px;margin-bottom: 13px;">
+                <div style="font-size: 12px;color: #7b868c;padding-left: 20px;margin-bottom: 13px;">
                     {{details.subtitle}}
                 </div>
                 <div style="padding-left: 20px;margin-bottom: 13px;">
                   <span style="font-size: 12px;color: red">￥</span>
-                  <span style="color: #fc5967;font-weight: bold;padding-top: 10px;font-size: 18px">{{details.sellingPrice}}</span>
+                  <span style="color: #fc5967;padding-top: 10px;font-size: 18px">{{details.sellingPrice}}</span>
                 </div>
               </div>
             </div>
             <div style="display: table;padding-left: 20px;">
-                <div style="display: table-cell;width: 20%;font-weight: bold;">购买数量</div>
-                <div style="display: table-cell;width: 80%;">
+                <div style="display: table-cell;width: 20%;">购买数量</div>
+                <div style="display: table-cell;float:right;margin-right: -20px;">
+                  <span style="font-size: 20px;
+    padding-left: 10px;
+    padding-right: 10px;" @click="numberClick(true)"> - </span>
                   <input type="number" name="points" min="1" max="10"
-                         @input="checkInput" value="1"
+                         v-model="value"
+                         @input="checkInput" value="1" disabled="disabled"
                          onKeyUp="this.value=this.value.replace(/[^\.\d]/g,'');this.value=this.value.replace('.','');"
-                         style="margin-right: -10px;font-weight: bold;width: 100px;float:right;background-color: rgb(247, 247, 247);height: 30px;text-align: -webkit-center;"/>
+                         style="width: 50px;background-color: rgb(247, 247, 247);height: 30px;text-align: -webkit-center;"/>
+                  <span style="font-size: 20px;
+    padding-left: 10px;
+    padding-right: 10px;" @click="numberClick(false)"> +  </span>
                 </div>
             </div>
               <!--购买模块-->
@@ -49,13 +56,13 @@
                 <div style="background-color: white;display: table-cell;padding-top: 15px;padding-left:20px;width: 70%;">
                   合计：
                   <span style="font-size: 12px;color: red">￥</span>
-                  <span style="color: #fc5967;font-weight: bold;padding-top: 10px;font-size: 22px">
+                  <span style="color: #fc5967;padding-top: 10px;font-size: 22px">
                     {{money}}
                   </span>
                   </div>
                 <div style="display: table-cell;color:white;padding-top: 15px;text-align: center;background-color: #fc5967;"
                      @click="goPlay">
-                确定下单</div>
+                确认下单</div>
               </div>
           </div>
           </div>
@@ -75,6 +82,7 @@
             return {
               money: 0,
               orderCount: 1,
+              value: 1,
               orderIng: true,
               details: {
                 'id': '',
@@ -114,11 +122,18 @@
           hide() {
             this.$router.go(-1);
           },
-          checkInput(data) {
+          numberClick(type) {
+            if (type) {
+              this.value = (this.value <= 1 ? 2 : this.value) - 1;
+            } else {
+              this.value = this.value + 1;
+            }
             let commoney = this.details.sellingPrice.replace(new RegExp(',', 'gm'), '');
-            this.money = Math.round((data.target.value * commoney) * 100) / 100;
-            this.orderCount = data.target.value;
+            this.money = Math.round((this.value * commoney) * 100) / 100;
+            this.orderCount = this.value;
+             console.log(this.value);
           },
+          checkInput(data) {},
           goPlay() {
             if (!this.details.address) {
               window.alert('请填写收货地址');
