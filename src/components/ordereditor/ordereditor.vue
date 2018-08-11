@@ -9,10 +9,34 @@
                         <div class="title">填写订单</div>
                     </header>
                 </header>
+
           <div style="margin-top: 60px">
-            <div style="font-size: 16px; color: #212023;margin-bottom: 5px;padding: 5px;padding-left: 10px;">
+              <!--居住地址三级联动选项-->
+              <div  style="padding-left: 15px;" @click="!showChose?showChose=true:showChose=false">
+                所在地 ： {{ Province!=false?Province:'请选择所在地' }}
+                 {{ City!=false?City:'' }}
+                {{ District!=false?District:'' }}</div>
+              <section class="showChose" v-show="showChose">
+                <section class="address">
+                  <section class="title" style="text-align: -webkit-center;height: 30px;padding-top: 10px;">
+                    <h4>所在地</h4>
+                    <span @click="closeAdd()">×</span>
+                  </section>
+                  <section class="title" style="height: 20px;font-size: 14px;">
+                    <p class="area" @click="provinceSelected()">{{Province?Province:(info[province-1].name)}}</p>
+                    <p class="area" @click="citySelected()" :class="City?'':'active'">{{City?City:'请选择'}}</p>
+                    <p class="area" @click="districtSelected()" :class="District?'':'active'" v-show="City">{{District?District:'请选择'}}</p>
+                  </section>
+                  <ul>
+                    <li class="addList" v-for="(v,k) in info" @click="getProvinceId(v.id, v.name, k)" v-show="showProvince" :class="v.selected ? 'active' : ''">{{v.name}}</li>
+                    <li class="addList" v-for="(v,k) in showCityList" @click="getCityId(v.id, v.name, k)" v-show="showCity" :class="v.selected ? 'active' : ''">{{v.name}}</li>
+                    <li class="addList" v-for="(v,k) in showDistrictList" @click="getDistrictId(v.id, v.name, k)" v-show="showDistrict" :class="v.selected ? 'active' : ''">{{v.name}}</li>
+                  </ul>
+                </section>
+              </section>
+          <!--  <div style="font-size: 16px; color: #212023;margin-bottom: 5px;padding: 5px;padding-left: 10px;">
               填写收货地址
-            </div>
+            </div>-->
               <textarea placeholder="输入详细收货地址" style="border: 0px;margin: 15px; width: 90%; height: 80px;font-size: 14px;" v-model="details.address"></textarea>
             <div style="font-size: 16px; color: #212023;margin-bottom: 15px; padding: 5px;padding-left: 10px;margin-top: 15px;">
               确认商品信息
@@ -73,6 +97,7 @@
     import {loadFromlLocal, savaToLocal} from '../../common/js/store.js';
     import {post} from '../../common/HttpUtils';
     import {api} from '../../common/HttpConfig';
+    import axios from 'axios';
 
     export default {
         name: 'v-ordereditor',
@@ -96,7 +121,24 @@
                 'inventory': '',
                 'salesVolume': '',
                 'address': ''
-              }
+              },
+              // city
+              showChose: false,
+              showProvince: true,
+              showCity: false,
+              showDistrict: false,
+              showCityList: false,
+              showDistrictList: false,
+              province: 1,
+              city: 3,
+              district: 57,
+              GetProvinceId: 2,
+              District: false,
+              Province: false,
+              City: false,
+              // v-for循环判断是否为当前
+              selected: false,
+              info: []
             };
         },
         created() {
@@ -112,6 +154,11 @@
           this.details.salesVolume = this.$route.query.salesVolume;
           this.money = this.details.sellingPrice.replace(new RegExp(',', 'gm'), '');
           this.details.address = loadFromlLocal('address', 'address', '');
+          let self = this;
+          axios.get('static/CityDatas.json', {
+          }).then(function (response) {
+            self.info = response.data.info;
+          }).catch(function (response) {});
         },
         computed: {
           ...mapState([
@@ -131,14 +178,18 @@
             let commoney = this.details.sellingPrice.replace(new RegExp(',', 'gm'), '');
             this.money = Math.round((this.value * commoney) * 100) / 100;
             this.orderCount = this.value;
-             console.log(this.value);
+            // console.log(this.value);
           },
           checkInput(data) {},
           goPlay() {
-            if (!this.details.address) {
+            if (!this.Province || !this.details.address) {
               window.alert('请填写收货地址');
               return;
             }
+            let Province = !this.Province ? this.Province : '';
+            let City = !this.City ? this.City : '';
+            let District = !this.District ? this.District : '';
+            let proAddress = Province + City + District;
             if (!this.orderIng) {
                return;
             }
@@ -150,7 +201,7 @@
                   commodityId: this.details.id,
                   commodityNo: this.details.comNo,
                   purchaseQuantity: this.orderCount,
-                  address: this.details.address,
+                  address: proAddress + this.details.address,
                   orderMoney: this.money
                 },
                 success: (res) => {
@@ -175,6 +226,81 @@
             } else {
               savaToLocal('address', 'address', '');
             }
+          },
+          // city
+          choseAdd: function() {
+            this.showChose = true;
+          },
+          closeAdd: function() {
+            this.showChose = false;
+          },
+          _filter(add, name, code) {
+            let result = [];
+            for (let i = 0; i < add.length; i++) {
+              if (code === add[i].id) {
+                result = add[i][name];
+              }
+            }
+            return result;
+          },
+          getProvinceId: function(code, input, index) {
+            this.province = code;
+            this.Province = input;
+            this.showProvince = false;
+            this.showCity = true;
+            this.showDistrict = false;
+            this.showCityList = this._filter(this.info, 'city', this.province);
+            // 点击选择当前
+            this.info.map(function (item, index, array) {
+              item.selected = false;
+            });
+            this.info[index].selected = true;
+          },
+          provinceSelected: function() {
+            // 清除市级和区级列表
+            this.showCityList = false;
+            this.showDistrictList = false;
+            // 清除市级和区级选项
+            this.City = false;
+            this.District = false;
+            // 选项页面的切换
+            this.showProvince = true;
+            this.showCity = false;
+            this.showDistrict = false;
+          },
+          getCityId: function(code, input, index) {
+            this.city = code;
+            this.City = input;
+            this.showProvince = false;
+            this.showCity = false;
+            this.showDistrict = true;
+            this.showDistrictList = this._filter(this.showCityList, 'district', this.city);
+            // 选择当前添加active
+            this.showCityList.map(function (item, index, array) {
+              item.selected = false;
+            });
+            this.showCityList[index].selected = true;
+          },
+          citySelected: function() {
+            this.showProvince = false;
+            this.showCity = true;
+            this.showDistrict = false;
+          },
+          getDistrictId: function(code, input, index) {
+            this.district = code;
+            this.District = input;
+            // 选择当前添加active
+            this.showDistrictList.map(function (item, index, array) {
+              item.selected = false;
+            });
+            this.showDistrictList[index].selected = true;
+            // 选取市区选项之后关闭弹层
+            this.showChose = false;
+          },
+          districtSelected: function() {
+            this.showProvince = false;
+            this.showCity = false;
+            this.showDistrict = true;
           }
         },
         components: {
